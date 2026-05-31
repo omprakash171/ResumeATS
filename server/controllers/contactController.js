@@ -1,12 +1,19 @@
 import nodemailer from "nodemailer";
 import Contact from "../models/Contact.js";
 
+// Validate email config exists
+if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+  console.warn(
+    "⚠️  EMAIL_USER or EMAIL_PASSWORD not set. Contact form emails will not work.",
+  );
+}
+
 // Configure email service (Gmail)
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER || "bomprakash485@gmail.com",
-    pass: process.env.EMAIL_PASSWORD || "", // Use app password for Gmail
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD,
   },
 });
 
@@ -20,6 +27,19 @@ export const sendContactMessage = async (req, res) => {
         .json({ error: "Name, email, and message are required" });
     }
 
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: "Invalid email format" });
+    }
+
+    // Validate message length
+    if (message.trim().length < 10) {
+      return res
+        .status(400)
+        .json({ error: "Message must be at least 10 characters" });
+    }
+
     // Save to database
     const newContact = new Contact({
       name,
@@ -29,10 +49,18 @@ export const sendContactMessage = async (req, res) => {
 
     await newContact.save();
 
+    // Only send emails if EMAIL_USER is configured
+    if (!process.env.EMAIL_USER) {
+      return res.json({
+        success: true,
+        message: "Message saved (email notifications disabled)",
+      });
+    }
+
     // Send email to admin
     const mailOptions = {
-      from: process.env.EMAIL_USER || "bomprakash485@gmail.com",
-      to: "bomprakash485@gmail.com",
+      from: process.env.EMAIL_USER,
+      to: process.env.EMAIL_USER,
       subject: `New Contact Form Submission from ${name}`,
       html: `
         <h2>New Contact Form Message</h2>
@@ -49,7 +77,7 @@ export const sendContactMessage = async (req, res) => {
 
     // Send email to user confirmation
     const userMailOptions = {
-      from: process.env.EMAIL_USER || "bomprakash485@gmail.com",
+      from: process.env.EMAIL_USER,
       to: email,
       subject: "We received your message - Resume ATS Analyzer",
       html: `
