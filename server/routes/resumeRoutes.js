@@ -1,0 +1,16 @@
+// Write your code here
+import express from "express";
+import authMiddleware from "../middleware/authMiddleware.js";
+import { upload } from "../middleware/upload.js";
+import {
+  uploadResume,
+  analyzeResume,
+  saveAnalysis,
+} from "../controllers/resumeController.js";
+
+const router = express.Router();
+router.post("/upload", authMiddleware, upload.single("resume"), uploadResume);
+router.post("/analyze", authMiddleware, analyzeResume);
+router.post("/save", authMiddleware, saveAnalysis);
+
+export default router;
