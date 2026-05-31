@@ -1,6 +1,7 @@
 // Write your code here
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { API_BASE_URL } from "../../config";
 import "./index.css";
 
 const Login = () => {
@@ -24,7 +25,7 @@ const Login = () => {
     setLoading(true);
     setError("");
 
-    const url = "http://localhost:5000/auth/login";
+    const url = `${API_BASE_URL}/auth/login`;
     const userDetails = { email, password };
 
     const options = {

@@ -1,6 +1,7 @@
 // Write your code here
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { API_BASE_URL } from "../../config";
 import "./index.css";
 
 const Register = () => {
@@ -31,7 +32,7 @@ const Register = () => {
     setError("");
     setSuccess("");
 
-    const url = "http://localhost:5000/auth/register";
+    const url = `${API_BASE_URL}/auth/register`;
     const userDetails = { name, email, password };
 
     const options = {

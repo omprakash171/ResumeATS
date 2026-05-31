@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Navbar from "../Navbar";
+import { API_BASE_URL } from "../../config";
 import "./index.css";
 
 const Contact = () => {
@@ -18,7 +19,7 @@ const Contact = () => {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:5000/contact/send", {
+      const response = await fetch(`${API_BASE_URL}/contact/send`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

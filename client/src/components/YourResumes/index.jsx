@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { API_BASE_URL } from "../../config";
 import "./index.css";
 
 const YourResumes = () => {
@@ -47,16 +48,13 @@ const YourResumes = () => {
       setSaveSuccess("");
 
       // STEP 1: Upload Resume
-      const uploadResponse = await fetch(
-        "http://localhost:5000/resume/upload",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
+      const uploadResponse = await fetch(`${API_BASE_URL}/resume/upload`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+        body: formData,
+      });
 
       if (!uploadResponse.ok) {
         const errorText = await uploadResponse.text();
@@ -71,17 +69,14 @@ const YourResumes = () => {
         jobDescription: jobDescription,
       };
 
-      const analyzeResponse = await fetch(
-        "http://localhost:5000/resume/analyze",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(rawData),
+      const analyzeResponse = await fetch(`${API_BASE_URL}/resume/analyze`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-      );
+        body: JSON.stringify(rawData),
+      });
 
       if (!analyzeResponse.ok) {
         const errorText = await analyzeResponse.text();
@@ -115,7 +110,7 @@ const YourResumes = () => {
     token,
   ) => {
     try {
-      const saveResponse = await fetch("http://localhost:5000/resume/save", {
+      const saveResponse = await fetch(`${API_BASE_URL}/resume/save`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
